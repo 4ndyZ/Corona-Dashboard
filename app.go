@@ -35,7 +35,7 @@ func (a *App) Run() {
 		a.Logger.Fatal(err)
 	}
 	// Create InfluxDB client
-	client := influxdb2.NewClientWithOptions(*a.Url, fmt.Sprintf("%s:%s", a.User, a.Password), influxdb2.DefaultOptions().SetBatchSize(50))
+	client := influxdb2.NewClientWithOptions(*a.Url, fmt.Sprintf("%s:%s", *a.User, *a.Password), influxdb2.DefaultOptions().SetBatchSize(50))
     writeAPI := client.WriteAPI("", "corona/autogen")
 	// Write data to InfluxDB
 	for _, landkreis := range landkreise {
