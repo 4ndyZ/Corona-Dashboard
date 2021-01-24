@@ -9,14 +9,14 @@ builds:
       - arm
 checksum:
   name_template: "Checksums.txt"
-archive:
+archives:
   name_template: "{{ .ProjectName }}-{{ .Tag }}.{{ .Os }}.{{ .Arch }}"
   wrap_in_directory: true
   format_overrides:
     - goos: windows
       format: zip
     - replacements:
-       amd64: x86_64
+      amd64: x86_64
   files:
     - config/config.conf
 nfpms:
