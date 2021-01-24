@@ -13,7 +13,7 @@ import (
 var Log Logger = Logger{}
 
 func main() {
-	Log.Initialize(false, "/var/log/corona-dashboard/log.txt") // Still hardcoded 
+	Log.Initialize(false, "/var/log/corona-dashboard/log.txt") // Still hardcoded
 
 	body, _ := ioutil.ReadFile("/etc/corona-dashboard/config.conf")
 
