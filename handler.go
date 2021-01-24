@@ -1,13 +1,13 @@
 package main
 
 import (
-	"regexp"
-	"io/ioutil"
-	"log"
-	"net/http"
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"regexp"
 	"strings"
 	"time"
+	"log"
 )
 
 func (a *App) GetData() (string, error) {

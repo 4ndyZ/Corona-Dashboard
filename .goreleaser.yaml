@@ -9,6 +9,16 @@ builds:
       - arm
 checksum:
   name_template: "Checksums.txt"
+archive:
+  name_template: "{{ .ProjectName }}-{{ .Tag }}.{{ .Os }}.{{ .Arch }}"
+  wrap_in_directory: true
+  format_overrides:
+    - goos: windows
+      format: zip
+    - replacements:
+       amd64: x86_64
+  files:
+    - config/config.conf
 nfpms:
 - maintainer: AndyZ <info@andycraftz.eu>
   description: RKI Corona Dashboard for Grafana
@@ -27,6 +37,14 @@ nfpms:
     - src: config/config.conf
       dst: /etc/corona-dashboard/config.conf
       type: "config|noreplace"
+    # Systemd service file
+    - src: service/service.service
+      dst: /usr/lib/systemd/system/corona-dashboard.service
+  overrides:
+      rpm:
+        replacements:
+          amd64: x86_64
+          arm64: aarch64
 release:
   # Set name of the release on GitHub
   name_template: "Release v{{.Version}}"
