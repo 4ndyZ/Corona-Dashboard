@@ -1,4 +1,3 @@
-project_name: example
 builds:
   - env: [CGO_ENABLED=0]
     goos:
@@ -8,6 +7,8 @@ builds:
       - amd64
       - arm64
       - arm
+checksum:
+  name_template: "{{ .ProjectName }}_checksums.txt"
 nfpms:
 - maintainer: AndyZ <info@andycraftz.eu>
   description: Corona Dashboard for Grafana
@@ -16,3 +17,5 @@ nfpms:
   formats:
   - deb
   - rpm
+release:
+  prerelease: auto
