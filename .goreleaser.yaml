@@ -11,37 +11,41 @@ builds:
 checksum:
   name_template: "Checksums.txt"
 archives:
-  name_template: "{{ .ProjectName }}-{{ .Tag }}.{{ .Os }}.{{ .Arch }}"
-  replacements:
-    amd64: x86_64
-    darwin: macOS
-  files:
-    - config/config.conf
-  format_overrides:
-    - goos: windows
-      format: zip
+  - name_template: "{{ .ProjectName }}-{{ .Tag }}.{{ .Os }}.{{ .Arch }}"
+    replacements:
+      amd64: x86_64
+      darwin: macOS
+    files:
+      - config/config.conf
+    format_overrides:
+      - goos: windows
+        format: zip
 nfpms:
-- maintainer: AndyZ <info@andycraftz.eu>
-  description: RKI Corona Dashboard for Grafana
-  homepage: https://github.com/4ndyZ/Corona-Dashboard
-  file_name_template: "{{ .ProjectName }}-{{ .Tag }}.{{ .Os }}.{{ .Arch }}"
-  license: GPL-3.0
-  # Build as deb for Debian based distors and rpm for RedHat based distros
-  formats:
-  - deb
-  - rpm
-  # Log folder
-  empty_folders:
-    - /var/log/corona-dashboard
-  contents:
-    # Config file
-    - src: config/config.conf
-      dst: /etc/corona-dashboard/config.conf
-      type: "config|noreplace"
-    # Systemd service file
-    - src: service/service.service
-      dst: /usr/lib/systemd/system/corona-dashboard.service
-  overrides:
+  - maintainer: AndyZ <info@andycraftz.eu>
+    description: RKI Corona Dashboard for Grafana
+    homepage: https://github.com/4ndyZ/Corona-Dashboard
+    file_name_template: "{{ .ProjectName }}-{{ .Tag }}.{{ .Os }}.{{ .Arch }}"
+    license: GPL-3.0
+    # Build as deb for Debian based distors and rpm for RedHat based distros
+    formats:
+      - deb
+      - rpm
+    # Log folder
+    empty_folders:
+      - /var/log/corona-dashboard
+    contents:
+      # Config file
+      - src: config/config.conf
+        dst: /etc/corona-dashboard/config.conf
+        type: "config|noreplace"
+      # Systemd service file
+      - src: service/service.service
+        dst: /usr/lib/systemd/system/corona-dashboard.service
+    #scripts:
+      # Install and remove scripts
+    #  preinstall: "scripts/preinstall.sh"
+    #  postremove: "scripts/postremove.sh"
+    overrides:
       rpm:
         replacements:
           amd64: x86_64
