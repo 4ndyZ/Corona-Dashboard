@@ -1,0 +1,18 @@
+project_name: example
+builds:
+  - env: [CGO_ENABLED=0]
+    goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+      - arm
+nfpms:
+- maintainer: AndyZ <info@andycraftz.eu>
+  description: Corona Dashboard for Grafana
+  homepage: https://github.com/4ndyZ/Corona-Dashboard
+  license: GPL-3.0
+  formats:
+  - deb
+  - rpm
