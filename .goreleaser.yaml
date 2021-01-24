@@ -8,14 +8,26 @@ builds:
       - arm64
       - arm
 checksum:
-  name_template: "{{ .ProjectName }}_checksums.txt"
+  name_template: "Checksums.txt"
 nfpms:
 - maintainer: AndyZ <info@andycraftz.eu>
-  description: Corona Dashboard for Grafana
+  description: RKI Corona Dashboard for Grafana
   homepage: https://github.com/4ndyZ/Corona-Dashboard
+  file_name_template: "{{ .ProjectName }}-{{ .Tag }}.{{ .Os }}.{{ .Arch }}"
   license: GPL-3.0
+  # Build as deb for Debian based distors and rpm for RedHat based distros
   formats:
   - deb
   - rpm
+  # Log folder
+  empty_folders:
+    - /var/log/corona-dashboard
+  contents:
+    # Config file
+    - src: config/config.conf
+      dst: /etc/corona-dashboard/config.conf
+      type: "config|noreplace"
 release:
+  # Set name of the release on GitHub
+  name_template: "Release v{{.Version}}"
   prerelease: auto
