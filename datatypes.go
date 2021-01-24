@@ -28,6 +28,7 @@ type LandkreisJSON struct {
 type Configuration struct {
 	InfluxDB struct {
 		URL string `yaml:"url"`
+		Name string `yaml:"name"`
 		User string `yaml:"user"`
 		Password string `yaml:"password"`
 	}

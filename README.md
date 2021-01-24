@@ -5,7 +5,7 @@ This is my implementation of a Corona Dashboard for [Grafana](https://grafana.co
 The numbers are provided by the [Robert Koch Institute (RKI)](https://en.wikipedia.org/wiki/Robert_Koch_Institute). The RKI is a German Federal Government agency and research institute responsible for disease control and prevention.
 
 ## Function
-The microservice to pull the data from the RKI API is written in [Go](https://golang.org/) and parses the data to get the relevant nubmers.
+The microservice to pull the data from the RKI API is written in [Go](https://golang.org/) and parses the data to get the relevant numbers.
 After parsing the data the microservice stores them in an [InfluxDB](https://www.influxdata.com/products/influxdb/) database. InfluxDB is a time series database.
 
 

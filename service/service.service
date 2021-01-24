@@ -1,0 +1,24 @@
+[Unit]
+Description=Corona-Dashboard Service
+ConditionPathExists=/usr/local/bin/Corona-Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=corona-dashboard
+Group=corona-dashboard
+
+Restart=on-failure
+RestartSec=10
+startLimitIntervalSec=60
+
+ExecStart=/usr/local/bin/Corona-Dashboard
+
+# make sure log directory exists
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /var/log/corona-dashboard
+ExecStartPre=/bin/chown corona-dashboard:root /var/log/corona-dashboard
+ExecStartPre=/bin/chmod 664 /var/log/corona-dashboard
+
+[Install]
+WantedBy=multi-user.target
