@@ -23,3 +23,18 @@ type LandkreisJSON struct {
 	Tode int `json:"deaths"`
 	LastUpdate string `json:"last_update"`
 }
+
+//
+type Configuration struct {
+	InfluxDB struct {
+		URL string `yaml:"url"`
+		User string `yaml:"user"`
+		Password string `yaml:"password"`
+	}
+	TimeInterval int `yaml:"timeinterval-to-pull"`
+	FederalState string `yaml:"federal-state"`
+	Logging struct {
+		Dir string `yaml:"log-dir"`
+		Debug bool `yaml:"debug"`
+	}
+}
