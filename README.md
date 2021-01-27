@@ -10,7 +10,7 @@ After parsing the data the microservice stores them in an [InfluxDB](https://www
 
 
 ## Example
-
+![Example Grafana Dashboard](https://github.com/4ndyZ/Corona-Dashboard/blob/master/.github/example.png)
 
 ## Prerequisites
 You need to have a running instance of Grafana and InfluxDB. Also it is recommend to have a server where you can deploy the microservice, but it is also possible to start the microservice manually on a local machine.
