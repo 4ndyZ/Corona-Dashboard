@@ -7,24 +7,28 @@ import (
 	"regexp"
 	"strings"
 	"time"
-	"log"
 )
 
-func (a *App) GetData() (string, error) {
-	resp, err := http.Get("https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/RKI_Landkreisdaten/FeatureServer/0/query?where=BL%20%3D%20%27BAYERN%27&outFields=county,BL,cases,cases_per_100k,cases7_per_100k,deaths,last_update&outSR=4326&f=json")
+func (a *App) GetData(federalState string) (string, error) {
+	var httpAPI string
+	// API string for all German Federal States
+	if strings.ToLower(federalState) == "all" {
+		httpAPI = "https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/RKI_Landkreisdaten/FeatureServer/0/query?where=1%3D1&outFields=county,BL,cases,cases_per_100k,cases7_per_100k,deaths,last_update&returnGeometry=false&outSR=4326&f=json"
+		// API string for a special German Federal State
+	} else {
+		httpAPI = strings.Join([]string{"https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/RKI_Landkreisdaten/FeatureServer/0/query?where=BL%20%3D%20%27", strings.ToLower(federalState), "%27&outFields=county,BL,cases,cases_per_100k,cases7_per_100k,deaths,last_update&returnGeometry=false&outSR=4326&f=json"}, "")
+	}
+	// Perform API HTTP call
+	resp, err := http.Get(httpAPI)
 	if err != nil {
-		log.Fatal(err)
 		return "", err
 	}
-
 	defer resp.Body.Close()
-
+	// Read response from HTTP call
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
 		return "", err
 	}
-
 	return string(body), nil
 }
 
@@ -43,11 +47,10 @@ func (a *App) ParseData(body *string) ([]Landkreis, error) {
 		// Unmarshal the JSON data to struct
 		err := json.Unmarshal([]byte(value), &landkreisjson)
 		if err != nil {
-			log.Fatal(err)
 			return landkreise, err
 		}
 		// Convert JSON struct to my struct
-		landkreis.Name = landkreisjson.Name;
+		landkreis.Name = landkreisjson.Name
 		landkreis.Bundesland = landkreisjson.Bundesland
 		landkreis.Faelle = landkreisjson.Faelle
 		landkreis.FaellePer100k = landkreisjson.FaellePer100k
@@ -57,7 +60,6 @@ func (a *App) ParseData(body *string) ([]Landkreis, error) {
 		layout := "02.01.2006, 15:04 Uhr"
 		t, err := time.Parse(layout, landkreisjson.LastUpdate)
 		if err != nil {
-			log.Fatal(err)
 			return landkreise, err
 		}
 		landkreis.LastUpdate = t

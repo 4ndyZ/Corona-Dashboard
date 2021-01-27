@@ -1,17 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"sync"
 	"github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/log"
+	"strings"
+	"sync"
 )
 
 // App struct to hold refs and database info
 type App struct {
-	Url *string
-	Name *string
-	User *string
+	Url      *string
+	Name     *string
+	User     *string
 	Password *string
 }
 
@@ -23,21 +23,21 @@ func (a *App) Initialize(url string, name string, user string, password string) 
 	a.Password = &password
 }
 
-func (a *App) Run() {
+func (a *App) Run(federalState string) {
 	// Get Corona data from the RKI API
-	data, err := a.GetData()
+	data, err := a.GetData(federalState)
 	if err != nil {
-		Log.Logger.Warn(err)
+		Log.Logger.Warn().Str("error", err.Error()).Msg("Error while getting the data from the RKI API.")
 	}
 	// Parse Corona data
 	landkreise, err := a.ParseData(&data)
 	if err != nil {
-		Log.Logger.Warn(err)
+		Log.Logger.Warn().Str("error", err.Error()).Msg("Error while parsing the data from the RKI API.")
 	}
 	// Create InfluxDB client
 	log.Log = nil // Disable log output of the InfluxDB Client
-	client := influxdb2.NewClientWithOptions(*a.Url, fmt.Sprintf("%s:%s", *a.User, *a.Password), influxdb2.DefaultOptions().SetBatchSize(50))
-    writeAPI := client.WriteAPI("", fmt.Sprintf("%s/autotgen", *a.Name))
+	client := influxdb2.NewClientWithOptions(*a.Url, strings.Join([]string{*a.User, ":", *a.Password}, ""), influxdb2.DefaultOptions().SetBatchSize(50))
+	writeAPI := client.WriteAPI("", strings.Join([]string{*a.Name, "/autogen"}, ""))
 	// Create wait grop for error channel
 	var wg sync.WaitGroup
 	// Create go proc for reading and logging errors
@@ -46,7 +46,7 @@ func (a *App) Run() {
 		for err := range errChannel {
 			defer wg.Done()
 			wg.Add(1)
-			Log.Logger.Warnw("Error while writing the data to InfluxDB.", "message", err.Error())
+			Log.Logger.Warn().Str("error", err.Error()).Msg("Error while writing the data to InfluxDB.")
 		}
 	}()
 	// Write data to InfluxDB
@@ -56,18 +56,18 @@ func (a *App) Run() {
 			AddTag("Bundesland", landkreis.Bundesland).
 			AddField("Faelle", landkreis.Faelle).
 			AddField("FaellePer100k", landkreis.FaellePer100k).
-			AddField("FaellePer100k7d",landkreis.FaellePer100k7d).
+			AddField("FaellePer100k7d", landkreis.FaellePer100k7d).
 			AddField("Tode", landkreis.Tode).
 			SetTime(landkreis.LastUpdate)
 		// Write asynchronously
 		writeAPI.WritePoint(p)
 		// Debug
-		Log.Logger.Debugw("Store entry to InfluxDB.", "landkreis", landkreis.Name, "bundesland", landkreis.Bundesland, "faelle", landkreis.Faelle, "faelleper100k", landkreis.FaellePer100k, "faelleper100k7d", landkreis.FaellePer100k7d, "tode", landkreis.Tode, "lastupdate", landkreis.LastUpdate)
+		Log.Logger.Debug().Str("landkreis", landkreis.Name).Str("bundesland", landkreis.Bundesland).Int("faelle", landkreis.Faelle).Float64("faelleper100k", landkreis.FaellePer100k).Float64("faelleper100k7d", landkreis.FaellePer100k7d).Int("tode", landkreis.Tode).Time("lastupdate", landkreis.LastUpdate).Msg("Store entry to InfluxDB.")
 	}
-    // Force all unwritten data to be sent
-    writeAPI.Flush()
-    // Ensures background processes finishes
-    client.Close()
+	// Force all unwritten data to be sent
+	writeAPI.Flush()
+	// Ensures background processes finishes
+	client.Close()
 	// Wait for error go proc
 	wg.Wait()
 }
