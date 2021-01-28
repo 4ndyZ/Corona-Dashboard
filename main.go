@@ -46,7 +46,7 @@ func main() {
 		Log.Logger.Warn().Str("error", err2.Error()).Msg("Error while accessing the configuration file.")
 	}
 	// Try to parse the configuration file if exists
-	if config == "" {
+	if config != "" {
 		body, err := ioutil.ReadFile(config)
 		if err != nil {
 			Log.Logger.Warn().Str("error", err.Error()).Msg("Error while reading the configuration file.")
