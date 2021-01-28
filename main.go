@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -16,7 +17,12 @@ func main() {
 	// Create configuration object
 	configuration := Configuration{}
 	// Initialize logging
-	Log.Initialize("log/log.txt")
+	logfolder := "/var/log/corona-dashboard"
+	_, err := os.Stat(logfolder)
+	if os.IsNotExist(err) || os.IsPermission(err) {
+		logfolder = "log"
+	}
+	Log.Initialize(strings.Join([]string{logfolder, "/log.txt"}, ""))
 
 	config := ""
 	config1 := "/etc/corona-dashboard/config.conf"
