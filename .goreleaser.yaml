@@ -30,21 +30,22 @@ nfpms:
     formats:
       - deb
       - rpm
-    # Log folder
-    empty_folders:
-      - /var/log/corona-dashboard
     contents:
       # Config file
       - src: config/config.conf
         dst: /etc/corona-dashboard/config.conf
         type: "config|noreplace"
+        file_info:
+          mode: 0640
+          owner: root
+          group: corona-dashboard
       # Systemd service file
       - src: service/service.service
         dst: /usr/lib/systemd/system/corona-dashboard.service
-    #scripts:
-      # Install and remove scripts
-    #  preinstall: "scripts/preinstall.sh"
-    #  postremove: "scripts/postremove.sh"
+    # Install and remove scripts
+    scripts:
+      preinstall: "scripts/preinstall.sh"
+      postremove: "scripts/postremove.sh"
     overrides:
       rpm:
         replacements:
