@@ -14,11 +14,9 @@ startLimitIntervalSec=60
 
 ExecStart=/usr/local/bin/Corona-Dashboard
 
-# make sure log directory exists
+# Make sure log directory exists
 PermissionsStartOnly=true
-ExecStartPre=/bin/mkdir -p /var/log/corona-dashboard
-ExecStartPre=/bin/chown corona-dashboard:root /var/log/corona-dashboard
-ExecStartPre=/bin/chmod 664 /var/log/corona-dashboard
+ExecStartPre=/bin/mkdir -p /var/log/corona-dashboard && /bin/chown corona-dashboard:corona-dashboard /var/log/corona-dashboard && /bin/chmod 0644 /var/log/corona-dashboard
 
 [Install]
 WantedBy=multi-user.target
