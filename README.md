@@ -9,7 +9,8 @@ The microservice to pull the data from the RKI API is written in [Go](https://go
 After parsing the data the microservice stores them in an [InfluxDB](https://www.influxdata.com/products/influxdb/) database. InfluxDB is a time series database.
 
 ## Example
-![Example Grafana Dashboard](https://raw.githubusercontent.com/4ndyZ/Corona-Dashboard/main/.github/example.png)
+![Example Grafana Cases](https://raw.githubusercontent.com/4ndyZ/Corona-Dashboard/main/.github/example_cases.png)
+![Example Grafana Vaccinations](https://raw.githubusercontent.com/4ndyZ/Corona-Dashboard/main/.github/example_vaccinations.png)
 
 ## Prerequisites
 You need to have a running instance of Grafana and InfluxDB. Also it is recommend to have a server where you can deploy the microservice, but it is also possible to start the microservice manually on a local machine.
