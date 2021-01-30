@@ -4,24 +4,42 @@ import (
 	"time"
 )
 
-type Landkreis struct {
-	Name            string
-	Bundesland      string
-	Faelle          int
-	FaellePer100k   float64
-	FaellePer100k7d float64
-	Tode            int
-	LastUpdate      time.Time
+type County struct {
+	Name           string
+	State          string
+	Cases          int
+	CasesPer100k   float64
+	CasesPer100k7d float64
+	Deaths         int
+	LastUpdate     time.Time
 }
 
-type LandkreisJSON struct {
-	Name            string  `json:"county"`
-	Bundesland      string  `json:"BL"`
-	Faelle          int     `json:"cases"`
-	FaellePer100k   float64 `json:"cases_per_100k"`
-	FaellePer100k7d float64 `json:"cases7_per_100k"`
-	Tode            int     `json:"deaths"`
-	LastUpdate      string  `json:"last_update"`
+type CountyJSON struct {
+	Name           string  `json:"county"`
+	State          string  `json:"BL"`
+	Cases          int     `json:"cases"`
+	CasesPer100k   float64 `json:"cases_per_100k"`
+	CasesPer100k7d float64 `json:"cases7_per_100k"`
+	Deaths         int     `json:"deaths"`
+	LastUpdate     string  `json:"last_update"`
+}
+
+type Vaccination struct {
+	Doses struct {
+		All         int
+		Biontech    int
+		Moderna     int
+		AstraZeneca int
+	}
+	People struct {
+		FirstTime int
+		Full      int
+	}
+	Rate struct {
+		FirstTime float64
+		Full      float64
+	}
+	LastUpdate time.Time
 }
 
 //
