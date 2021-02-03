@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	_ "time/tzdata"
 )
 
 func (a *App) GetDataCounty(state string) (string, error) {
