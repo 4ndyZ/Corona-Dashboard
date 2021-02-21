@@ -24,7 +24,7 @@ Download the prebuilt binary packages from the [release page](https://github.com
 If you are running a Debian-based Linux Distribution choose the `.deb` Package for your operating system architecture and download it. You are able to use curl to download the package.
 
 Now you are able to install the package using APT.
-`sudo apt install -f Corona-Dashboard-vX.X-.linux.XXXX.deb`
+`sudo apt install ./Corona-Dashboard-vX.X-.linux.XXXX.deb`
 
 After installing the package configure the microservice. The configuration file is located under `/etc/corona-dashboard/config.yml`.
 
