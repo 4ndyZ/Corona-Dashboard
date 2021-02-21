@@ -28,7 +28,7 @@ Now you are able to install the package using APT.
 
 After installing the package configure the microservice. The configuration file is located under `/etc/corona-dashboard/config.yml`.
 
-No you you are able to enable the Systemd service using `systemctl`.
+At this point you are able to enable the Systemd service using `systemctl`.
 `sudo systemctl enable corona-dashboard`
 
 And start the service also using `systemctl`.
