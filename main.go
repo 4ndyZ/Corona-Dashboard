@@ -100,7 +100,7 @@ func main() {
 		Log.Logger.Info().Msg("Starting data refresh ... ")
 		a.Run(configuration.FederalState)
 		Log.Logger.Info().Msg("Finshed data refresh.")
-		// Wait the provided time to befor running againg
+		// Wait the provided time to before running againg
 		d := time.Second * time.Duration(configuration.TimeInterval)
 		Log.Logger.Info().Interface("duration", d).Msg("Waiting for the next run.")
 		time.Sleep(d)
