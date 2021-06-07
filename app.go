@@ -131,7 +131,7 @@ func (a *App) Run(federalState string) {
         p5 := influxdb2.NewPoint(
             "vaccination",
             map[string]string{
-                "Manufacturer": "AstraZeneca",
+                "Manufacturer": "Johnson",
             },
             map[string]interface{}{
                 "Doses": vaccination.Doses.Johnson,
