@@ -128,7 +128,16 @@ func (a *App) Run(federalState string) {
 				"Doses": vaccination.Doses.AstraZeneca,
 			},
 			vaccination.LastUpdate)
-		p5 := influxdb2.NewPoint(
+        p5 := influxdb2.NewPoint(
+            "vaccination",
+            map[string]string{
+                "Manufacturer": "AstraZeneca",
+            },
+            map[string]interface{}{
+                "Doses": vaccination.Doses.Johnson,
+            },
+            vaccination.LastUpdate)
+		p6 := influxdb2.NewPoint(
 			"vaccination",
 			map[string]string{
 				"Typ": "FirstTime",
@@ -138,7 +147,7 @@ func (a *App) Run(federalState string) {
 				"Rate":    vaccination.Rate.FirstTime,
 			},
 			vaccination.LastUpdate)
-		p6 := influxdb2.NewPoint(
+		p7 := influxdb2.NewPoint(
 			"vaccination",
 			map[string]string{
 				"Typ": "Full",
@@ -155,12 +164,14 @@ func (a *App) Run(federalState string) {
 		writeAPI.WritePoint(p4)
 		writeAPI.WritePoint(p5)
 		writeAPI.WritePoint(p6)
+        writeAPI.WritePoint(p7)
 		// Debug
 		Log.Logger.Debug().
 			Int("doses-all", vaccination.Doses.All).
 			Int("doses-biontech", vaccination.Doses.Biontech).
 			Int("doses-moderna", vaccination.Doses.Moderna).
 			Int("doses-astrazeneca", vaccination.Doses.AstraZeneca).
+            Int("doses-johnson", vaccination.Doses.Johnson).
 			Int("people-firsttime", vaccination.People.FirstTime).
 			Int("people-full", vaccination.People.Full).
 			Float64("rate-firsttime", vaccination.Rate.FirstTime).

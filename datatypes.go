@@ -30,6 +30,7 @@ type Vaccination struct {
 		Biontech    int
 		Moderna     int
 		AstraZeneca int
+        Johnson     int
 	}
 	People struct {
 		FirstTime int
