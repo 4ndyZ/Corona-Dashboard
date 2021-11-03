@@ -157,6 +157,15 @@ func (a *App) Run(federalState string) {
 				"Rate":   vaccination.Rate.Full,
 			},
 			vaccination.LastUpdate)
+		p8 := influxdb2.NewPoint(
+			"vaccination",
+			map[string]string{
+				"Typ": "Refreshment",
+			},
+			map[string]interface{}{
+				"People": vaccination.People.Refreshment,
+			},
+			vaccination.LastUpdate)
 		// Write asynchronously
 		writeAPI.WritePoint(p1)
 		writeAPI.WritePoint(p2)
@@ -165,6 +174,7 @@ func (a *App) Run(federalState string) {
 		writeAPI.WritePoint(p5)
 		writeAPI.WritePoint(p6)
 		writeAPI.WritePoint(p7)
+		writeAPI.WritePoint(p8)
 		// Debug
 		Log.Logger.Debug().
 			Int("doses-all", vaccination.Doses.All).
@@ -174,6 +184,7 @@ func (a *App) Run(federalState string) {
 			Int("doses-johnson", vaccination.Doses.Johnson).
 			Int("people-firsttime", vaccination.People.FirstTime).
 			Int("people-full", vaccination.People.Full).
+			Int("people-refreshment", vaccination.People.Refreshment).
 			Float64("rate-firsttime", vaccination.Rate.FirstTime).
 			Float64("rate-full", vaccination.Rate.Full).
 			Msg("Store vaccination entry to InfluxDB.")

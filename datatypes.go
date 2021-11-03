@@ -33,8 +33,9 @@ type Vaccination struct {
 		Johnson     int
 	}
 	People struct {
-		FirstTime int
-		Full      int
+		FirstTime   int
+		Full        int
+		refreshment int
 	}
 	Rate struct {
 		FirstTime float64
