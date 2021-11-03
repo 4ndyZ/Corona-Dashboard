@@ -30,7 +30,7 @@ type Vaccination struct {
 		Biontech    int
 		Moderna     int
 		AstraZeneca int
-        Johnson     int
+		Johnson     int
 	}
 	People struct {
 		FirstTime int
@@ -46,10 +46,10 @@ type Vaccination struct {
 //
 type Configuration struct {
 	InfluxDB struct {
-		URL      string `yaml:"url"`
-		Name     string `yaml:"name"`
-		User     string `yaml:"user"`
-		Password string `yaml:"password"`
+		Version string `yaml:"version"`
+		URL     string `yaml:"url"`
+		Name    string `yaml:"name"`
+		Auth    string `yaml:"auth"`
 	}
 	TimeInterval int    `yaml:"timeinterval-to-pull"`
 	SingleRun    bool   `yaml:"single-run"`

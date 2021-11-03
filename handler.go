@@ -118,8 +118,8 @@ func (a *App) ParseDataVaccination(body *[][]string) ([]Vaccination, error) {
 				vaccination.Doses.Moderna = a.MustStringToInt(value)
 			case "dosen_astrazeneca_kumulativ":
 				vaccination.Doses.AstraZeneca = a.MustStringToInt(value)
-            case "dosen_johnson_kumulativ":
-                vaccination.Doses.Johnson = a.MustStringToInt(value)
+			case "dosen_johnson_kumulativ":
+				vaccination.Doses.Johnson = a.MustStringToInt(value)
 			case "personen_erst_kumulativ":
 				vaccination.People.FirstTime = a.MustStringToInt(value)
 			case "personen_voll_kumulativ":
