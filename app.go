@@ -9,18 +9,26 @@ import (
 
 // App struct to hold refs and database info
 type App struct {
-	Version *string
-	Url     *string
-	Name    *string
-	Auth    *string
+	InfluxDB struct {
+		URL    string
+		Auth   string
+		Org    string
+		Bucket string
+	}
 }
 
 // Initialize app struct with database info
-func (a *App) Initialize(version string, url string, name string, auth string) {
-	a.Verison = &version
-	a.Url = &url
-	a.Name = &name
-	a.Auth = &auth
+func (a *App) Initialize(configuration Configuration) {
+	a.InfluxDB.URL = configuration.InfluxDB.URL
+	if configuration.InfluxDB.Version == "v1" {
+		a.InfluxDB.Auth = strings.Join([]string{configuration.InfluxDB.V1.User, ":", configuration.InfluxDB.V1.Password}, "")
+		a.InfluxDB.Org = ""
+		a.InfluxDB.Bucket = strings.Join([]string{configuration.InfluxDB.V1.Name, "/autogen"}, "")
+	} else if configuration.InfluxDB.Version == "v2" {
+		a.InfluxDB.Auth = configuration.InfluxDB.V2.Token
+		a.InfluxDB.Org = configuration.InfluxDB.V2.Org
+		a.InfluxDB.Bucket = configuration.InfluxDB.V2.Bucket
+	}
 }
 
 func (a *App) Run(federalState string) {
@@ -47,8 +55,8 @@ func (a *App) Run(federalState string) {
 	// Parse
 	// Create InfluxDB client
 	log.Log = nil // Disable log output of the InfluxDB Client
-	client := influxdb2.NewClientWithOptions(*a.Url, *a.Auth, influxdb2.DefaultOptions().SetBatchSize(50))
-	writeAPI := client.WriteAPI("", strings.Join([]string{*a.Name, "/autogen"}, ""))
+	client := influxdb2.NewClientWithOptions(a.InfluxDB.URL, a.InfluxDB.Auth, influxdb2.DefaultOptions().SetBatchSize(50))
+	writeAPI := client.WriteAPI(a.InfluxDB.Org, a.InfluxDB.Bucket)
 	// Create wait grop for error channel
 	var wg sync.WaitGroup
 	// Create go proc for reading and logging errors

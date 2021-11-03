@@ -58,8 +58,10 @@ func main() {
 		// Set default configuration parameter
 	} else {
 		configuration.InfluxDB.Version = "v1"
-		configuration.InfluxDB.Name = "corona"
-		configuration.InfluxDB.Auth = "corona:corona"
+		configuration.InfluxDB.V1.Name = "corona"
+		configuration.InfluxDB.V1.User = "corona"
+		configuration.InfluxDB.V1.Password = "corona"
+		configuration.InfluxDB.V2.Bucket = "corona"
 		configuration.TimeInterval = 86400
 		configuration.SingleRun = false
 		configuration.FederalState = "all"
@@ -68,8 +70,12 @@ func main() {
 	// Commandline flags
 	flag.StringVar(&configuration.InfluxDB.Version, "dbversion", configuration.InfluxDB.Version, "InfluxDB database version (v1/v2) to use")
 	flag.StringVar(&configuration.InfluxDB.URL, "dburl", configuration.InfluxDB.URL, "InfluxDB database connection URL including the port (e.g. https://myinfluxdb-server.tld:8086)")
-	flag.StringVar(&configuration.InfluxDB.Name, "dbname", configuration.InfluxDB.Name, "Database name (v1) or bucket (v2) of the InfluxDB database")
-	flag.StringVar(&configuration.InfluxDB.Auth, "auth", configuration.InfluxDB.Auth, "Password string username:password (v1) or auth token (v2) of the InfluxDB database")
+	flag.StringVar(&configuration.InfluxDB.V1.Name, "dbname", configuration.InfluxDB.V1.Name, "Database name of the InfluxDB v1 database")
+	flag.StringVar(&configuration.InfluxDB.V1.User, "dbuser", configuration.InfluxDB.V1.User, "Database user of the InfluxDB v1 database")
+	flag.StringVar(&configuration.InfluxDB.V1.Password, "dbpassword", configuration.InfluxDB.V1.User, "Database user pasword of the InfluxDB v1 database")
+	flag.StringVar(&configuration.InfluxDB.V2.Token, "dbtoken", configuration.InfluxDB.V2.Token, "Database authentication token of the InfluxDB v2 database")
+	flag.StringVar(&configuration.InfluxDB.V2.Org, "dborg", configuration.InfluxDB.V2.Org, "Database org of the InfluxDB v2 database")
+	flag.StringVar(&configuration.InfluxDB.V2.Bucket, "dbbucket", configuration.InfluxDB.V2.Bucket, "Database bucket of the InfluxDB v2 database")
 	flag.IntVar(&configuration.TimeInterval, "timeinterval", configuration.TimeInterval, "Time interval when the data should be pulled of the RKI API in seconds (default: 86400)")
 	flag.BoolVar(&configuration.SingleRun, "singlerun", configuration.SingleRun, "Option to run the microservice only one time and then stop afterwards. Option timeinterval will be ignored!")
 	flag.StringVar(&configuration.FederalState, "state", configuration.FederalState, "Option to pull the data only from one German Federal State (e.g. Bayern) (default: all)")
@@ -83,7 +89,7 @@ func main() {
 	Log.Logger.Info().Msg("Starting ...")
 	// Create app worker
 	a := App{}
-	a.Initialize(configuration.InfluxDB.Version, configuration.InfluxDB.URL, configuration.InfluxDB.Name, configuration.InfluxDB.Auth)
+	a.Initialize(configuration)
 	// Setup signal catching
 	sigs := make(chan os.Signal, 1)
 	// Catch all signals since not explicitly listing
