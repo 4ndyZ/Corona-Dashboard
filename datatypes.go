@@ -30,11 +30,12 @@ type Vaccination struct {
 		Biontech    int
 		Moderna     int
 		AstraZeneca int
-        Johnson     int
+		Johnson     int
 	}
 	People struct {
-		FirstTime int
-		Full      int
+		FirstTime   int
+		Full        int
+		Refreshment int
 	}
 	Rate struct {
 		FirstTime float64
@@ -46,11 +47,19 @@ type Vaccination struct {
 //
 type Configuration struct {
 	InfluxDB struct {
-		URL      string `yaml:"url"`
-		Name     string `yaml:"name"`
-		User     string `yaml:"user"`
-		Password string `yaml:"password"`
-	}
+		URL     string `yaml:"url"`
+		Version string `yaml:"version"`
+		V1      struct {
+			Name     string `yaml:"name"`
+			User     string `yaml:"user"`
+			Password string `yaml:"password"`
+		} `yaml:"v1"`
+		V2 struct {
+			Org    string `yaml:"org"`
+			Bucket string `yaml:"bucket"`
+			Token  string `yaml:"token"`
+		} `yaml:"v2"`
+	} `yaml:"influxdb"`
 	TimeInterval int    `yaml:"timeinterval-to-pull"`
 	SingleRun    bool   `yaml:"single-run"`
 	FederalState string `yaml:"federal-state"`

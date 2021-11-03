@@ -9,18 +9,26 @@ import (
 
 // App struct to hold refs and database info
 type App struct {
-	Url      *string
-	Name     *string
-	User     *string
-	Password *string
+	InfluxDB struct {
+		URL    string
+		Auth   string
+		Org    string
+		Bucket string
+	}
 }
 
 // Initialize app struct with database info
-func (a *App) Initialize(url string, name string, user string, password string) {
-	a.Url = &url
-	a.Name = &name
-	a.User = &user
-	a.Password = &password
+func (a *App) Initialize(configuration Configuration) {
+	a.InfluxDB.URL = configuration.InfluxDB.URL
+	if configuration.InfluxDB.Version == "v1" {
+		a.InfluxDB.Auth = strings.Join([]string{configuration.InfluxDB.V1.User, ":", configuration.InfluxDB.V1.Password}, "")
+		a.InfluxDB.Org = ""
+		a.InfluxDB.Bucket = strings.Join([]string{configuration.InfluxDB.V1.Name, "/autogen"}, "")
+	} else if configuration.InfluxDB.Version == "v2" {
+		a.InfluxDB.Auth = configuration.InfluxDB.V2.Token
+		a.InfluxDB.Org = configuration.InfluxDB.V2.Org
+		a.InfluxDB.Bucket = configuration.InfluxDB.V2.Bucket
+	}
 }
 
 func (a *App) Run(federalState string) {
@@ -47,8 +55,8 @@ func (a *App) Run(federalState string) {
 	// Parse
 	// Create InfluxDB client
 	log.Log = nil // Disable log output of the InfluxDB Client
-	client := influxdb2.NewClientWithOptions(*a.Url, strings.Join([]string{*a.User, ":", *a.Password}, ""), influxdb2.DefaultOptions().SetBatchSize(50))
-	writeAPI := client.WriteAPI("", strings.Join([]string{*a.Name, "/autogen"}, ""))
+	client := influxdb2.NewClientWithOptions(a.InfluxDB.URL, a.InfluxDB.Auth, influxdb2.DefaultOptions().SetBatchSize(50))
+	writeAPI := client.WriteAPI(a.InfluxDB.Org, a.InfluxDB.Bucket)
 	// Create wait grop for error channel
 	var wg sync.WaitGroup
 	// Create go proc for reading and logging errors
@@ -98,7 +106,7 @@ func (a *App) Run(federalState string) {
 				"Manufacturer": "All",
 			},
 			map[string]interface{}{
-				"Doses":    vaccination.Doses.All,
+				"Doses": vaccination.Doses.All,
 			},
 			vaccination.LastUpdate)
 		p2 := influxdb2.NewPoint(
@@ -128,15 +136,15 @@ func (a *App) Run(federalState string) {
 				"Doses": vaccination.Doses.AstraZeneca,
 			},
 			vaccination.LastUpdate)
-        p5 := influxdb2.NewPoint(
-            "vaccination",
-            map[string]string{
-                "Manufacturer": "Johnson",
-            },
-            map[string]interface{}{
-                "Doses": vaccination.Doses.Johnson,
-            },
-            vaccination.LastUpdate)
+		p5 := influxdb2.NewPoint(
+			"vaccination",
+			map[string]string{
+				"Manufacturer": "Johnson",
+			},
+			map[string]interface{}{
+				"Doses": vaccination.Doses.Johnson,
+			},
+			vaccination.LastUpdate)
 		p6 := influxdb2.NewPoint(
 			"vaccination",
 			map[string]string{
@@ -144,7 +152,7 @@ func (a *App) Run(federalState string) {
 			},
 			map[string]interface{}{
 				"People": vaccination.People.FirstTime,
-				"Rate":    vaccination.Rate.FirstTime,
+				"Rate":   vaccination.Rate.FirstTime,
 			},
 			vaccination.LastUpdate)
 		p7 := influxdb2.NewPoint(
@@ -154,7 +162,16 @@ func (a *App) Run(federalState string) {
 			},
 			map[string]interface{}{
 				"People": vaccination.People.Full,
-				"Rate":    vaccination.Rate.Full,
+				"Rate":   vaccination.Rate.Full,
+			},
+			vaccination.LastUpdate)
+		p8 := influxdb2.NewPoint(
+			"vaccination",
+			map[string]string{
+				"Typ": "Refreshment",
+			},
+			map[string]interface{}{
+				"People": vaccination.People.Refreshment,
 			},
 			vaccination.LastUpdate)
 		// Write asynchronously
@@ -164,16 +181,18 @@ func (a *App) Run(federalState string) {
 		writeAPI.WritePoint(p4)
 		writeAPI.WritePoint(p5)
 		writeAPI.WritePoint(p6)
-        writeAPI.WritePoint(p7)
+		writeAPI.WritePoint(p7)
+		writeAPI.WritePoint(p8)
 		// Debug
 		Log.Logger.Debug().
 			Int("doses-all", vaccination.Doses.All).
 			Int("doses-biontech", vaccination.Doses.Biontech).
 			Int("doses-moderna", vaccination.Doses.Moderna).
 			Int("doses-astrazeneca", vaccination.Doses.AstraZeneca).
-            Int("doses-johnson", vaccination.Doses.Johnson).
+			Int("doses-johnson", vaccination.Doses.Johnson).
 			Int("people-firsttime", vaccination.People.FirstTime).
 			Int("people-full", vaccination.People.Full).
+			Int("people-refreshment", vaccination.People.Refreshment).
 			Float64("rate-firsttime", vaccination.Rate.FirstTime).
 			Float64("rate-full", vaccination.Rate.Full).
 			Msg("Store vaccination entry to InfluxDB.")
