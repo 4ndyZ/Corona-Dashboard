@@ -9,18 +9,18 @@ import (
 
 // App struct to hold refs and database info
 type App struct {
+	Version  *string
 	Url      *string
 	Name     *string
-	User     *string
-	Password *string
+	Auth     *string
 }
 
 // Initialize app struct with database info
-func (a *App) Initialize(url string, name string, user string, password string) {
-	a.Url = &url
+func (a *App) Initialize(version string, url string, name string, auth string) {
+    a.Verison = &version
+    a.Url = &url
 	a.Name = &name
-	a.User = &user
-	a.Password = &password
+	a.Auth = &auth
 }
 
 func (a *App) Run(federalState string) {
@@ -47,7 +47,7 @@ func (a *App) Run(federalState string) {
 	// Parse
 	// Create InfluxDB client
 	log.Log = nil // Disable log output of the InfluxDB Client
-	client := influxdb2.NewClientWithOptions(*a.Url, strings.Join([]string{*a.User, ":", *a.Password}, ""), influxdb2.DefaultOptions().SetBatchSize(50))
+	client := influxdb2.NewClientWithOptions(*a.Url, *a.Auth, ""), influxdb2.DefaultOptions().SetBatchSize(50))
 	writeAPI := client.WriteAPI("", strings.Join([]string{*a.Name, "/autogen"}, ""))
 	// Create wait grop for error channel
 	var wg sync.WaitGroup

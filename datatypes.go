@@ -46,10 +46,10 @@ type Vaccination struct {
 //
 type Configuration struct {
 	InfluxDB struct {
+		Version  string `yaml:"version"`
 		URL      string `yaml:"url"`
 		Name     string `yaml:"name"`
-		User     string `yaml:"user"`
-		Password string `yaml:"password"`
+		Auth     string `yaml:"auth"`
 	}
 	TimeInterval int    `yaml:"timeinterval-to-pull"`
 	SingleRun    bool   `yaml:"single-run"`
