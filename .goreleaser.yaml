@@ -4,6 +4,7 @@ builds:
       - linux
       - windows
       - darwin
+      - freebsd
     goarch:
       - amd64
       - arm64
@@ -11,7 +12,7 @@ builds:
 checksum:
   name_template: "Checksums.txt"
 archives:
-  - name_template: "{{ .ProjectName }}-{{ .Tag }}.{{ .Os }}.{{ .Arch }}"
+  - name_template: "{{ tolower .ProjectName }}-{{ tolower .Tag }}.{{ .Os }}.{{ tolower .Arch }}"
     replacements:
       amd64: x86_64
       darwin: macOS
@@ -24,7 +25,7 @@ nfpms:
   - maintainer: AndyZ <info@andycraftz.eu>
     description: RKI Corona Dashboard for Grafana
     homepage: https://github.com/4ndyZ/Corona-Dashboard
-    file_name_template: "{{ .ProjectName }}-{{ .Tag }}.{{ .Os }}.{{ .Arch }}"
+    file_name_template: "{{ tolower .ProjectName }}-{{ tolower .Tag }}.{{ .Os }}.{{ tolower .Arch }}"
     license: GPL-3.0
     # Build as deb for Debian based distors and rpm for RedHat based distros
     formats:
@@ -53,5 +54,5 @@ nfpms:
           arm64: aarch64
 release:
   # Set name of the release on GitHub
-  name_template: "Release v{{.Version}}"
+  name_template: "Release v{{ .Version }}"
   prerelease: auto
