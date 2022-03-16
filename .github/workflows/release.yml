@@ -1,9 +1,8 @@
-name: Release
+name: goreleaser
 
 on:
-  create:
-    tags:
-      - v*
+  pull_request:
+  push:
 
 jobs:
   build:
