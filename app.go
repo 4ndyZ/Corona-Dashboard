@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/influxdata/influxdb-client-go/v2"
+	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/log"
 	"strings"
 	"sync"
@@ -33,22 +33,22 @@ func (a *App) Initialize(configuration Configuration) {
 
 func (a *App) Run(federalState string) {
 	// Get Corona data from the RKI API
-	countydata, err := a.GetDataCounty(federalState)
+	countyData, err := a.GetDataCounty(federalState)
 	if err != nil {
 		Log.Logger.Warn().Str("error", err.Error()).Msg("Error while getting the data from the RKI county API.")
 	}
 	// Parse Corona data
-	counties, err := a.ParseDataCounty(&countydata)
+	counties, err := a.ParseDataCounty(&countyData)
 	if err != nil {
 		Log.Logger.Warn().Str("error", err.Error()).Msg("Error while parsing the data from the RKI county API.")
 	}
 	// Get Vaccination data from the Vaccination dashboard
-	vaccinationdata, err := a.GetDataVaccination()
+	vaccinationData, err := a.GetDataVaccination()
 	if err != nil {
 		Log.Logger.Warn().Str("error", err.Error()).Msg("Error while getting the data from the vaccination dashboard.")
 	}
 	// Parse vaccination data
-	vaccinations, err := a.ParseDataVaccination(&vaccinationdata)
+	vaccinations, err := a.ParseDataVaccination(&vaccinationData)
 	if err != nil {
 		Log.Logger.Warn().Str("error", err.Error()).Msg("Error while parsing the data from the vaccination dashboard.")
 	}
@@ -57,7 +57,7 @@ func (a *App) Run(federalState string) {
 	log.Log = nil // Disable log output of the InfluxDB Client
 	client := influxdb2.NewClientWithOptions(a.InfluxDB.URL, a.InfluxDB.Auth, influxdb2.DefaultOptions().SetBatchSize(50))
 	writeAPI := client.WriteAPI(a.InfluxDB.Org, a.InfluxDB.Bucket)
-	// Create wait grop for error channel
+	// Create wait group for error channel
 	var wg sync.WaitGroup
 	// Create go proc for reading and logging errors
 	errChannel := writeAPI.Errors()
@@ -148,6 +148,15 @@ func (a *App) Run(federalState string) {
 		p6 := influxdb2.NewPoint(
 			"vaccination",
 			map[string]string{
+				"Manufacturer": "Novavax",
+			},
+			map[string]interface{}{
+				"Doses": vaccination.Doses.Novavax,
+			},
+			vaccination.LastUpdate)
+		p7 := influxdb2.NewPoint(
+			"vaccination",
+			map[string]string{
 				"Typ": "FirstTime",
 			},
 			map[string]interface{}{
@@ -155,7 +164,7 @@ func (a *App) Run(federalState string) {
 				"Rate":   vaccination.Rate.FirstTime,
 			},
 			vaccination.LastUpdate)
-		p7 := influxdb2.NewPoint(
+		p8 := influxdb2.NewPoint(
 			"vaccination",
 			map[string]string{
 				"Typ": "Full",
@@ -165,7 +174,7 @@ func (a *App) Run(federalState string) {
 				"Rate":   vaccination.Rate.Full,
 			},
 			vaccination.LastUpdate)
-		p8 := influxdb2.NewPoint(
+		p9 := influxdb2.NewPoint(
 			"vaccination",
 			map[string]string{
 				"Typ": "Refreshment",
@@ -183,6 +192,7 @@ func (a *App) Run(federalState string) {
 		writeAPI.WritePoint(p6)
 		writeAPI.WritePoint(p7)
 		writeAPI.WritePoint(p8)
+		writeAPI.WritePoint(p9)
 		// Debug
 		Log.Logger.Debug().
 			Int("doses-all", vaccination.Doses.All).
@@ -190,6 +200,7 @@ func (a *App) Run(federalState string) {
 			Int("doses-moderna", vaccination.Doses.Moderna).
 			Int("doses-astrazeneca", vaccination.Doses.AstraZeneca).
 			Int("doses-johnson", vaccination.Doses.Johnson).
+			Int("doses-novavax", vaccination.Doses.Novavax).
 			Int("people-firsttime", vaccination.People.FirstTime).
 			Int("people-full", vaccination.People.Full).
 			Int("people-refreshment", vaccination.People.Refreshment).

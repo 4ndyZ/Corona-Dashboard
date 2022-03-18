@@ -1,6 +1,6 @@
 [Unit]
 Description=Corona-Dashboard Service
-ConditionPathExists=/usr/local/bin/Corona-Dashboard
+ConditionPathExists=/usr/local/bin/corona-dashboard
 After=network.target
 
 [Service]
@@ -12,7 +12,7 @@ Restart=on-failure
 RestartSec=10
 startLimitIntervalSec=60
 
-ExecStart=/usr/local/bin/Corona-Dashboard
+ExecStart=/usr/local/bin/corona-dashboard
 
 # Make sure log directory exists
 PermissionsStartOnly=true

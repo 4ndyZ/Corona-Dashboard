@@ -11,18 +11,19 @@ import (
 	"time"
 )
 
-var Log Logger = Logger{}
+// Log global logger for the app global
+var Log = Logger{}
 
 func main() {
 	// Create configuration object
 	configuration := Configuration{}
 	// Initialize logging
-	logfolder := "/var/log/corona-dashboard"
-	_, err := os.Stat(logfolder)
+	logFolder := "/var/log/corona-dashboard"
+	_, err := os.Stat(logFolder)
 	if os.IsNotExist(err) || os.IsPermission(err) {
-		logfolder = "log"
+		logFolder = "log"
 	}
-	Log.Initialize(strings.Join([]string{logfolder, "/log.txt"}, ""))
+	Log.Initialize(strings.Join([]string{logFolder, "/log.txt"}, ""))
 
 	config := ""
 	config1 := "/etc/corona-dashboard/config.conf"
@@ -72,7 +73,7 @@ func main() {
 	flag.StringVar(&configuration.InfluxDB.URL, "dburl", configuration.InfluxDB.URL, "InfluxDB database connection URL including the port (e.g. https://myinfluxdb-server.tld:8086)")
 	flag.StringVar(&configuration.InfluxDB.V1.Name, "dbname", configuration.InfluxDB.V1.Name, "Database name of the InfluxDB v1 database")
 	flag.StringVar(&configuration.InfluxDB.V1.User, "dbuser", configuration.InfluxDB.V1.User, "Database user of the InfluxDB v1 database")
-	flag.StringVar(&configuration.InfluxDB.V1.Password, "dbpassword", configuration.InfluxDB.V1.User, "Database user pasword of the InfluxDB v1 database")
+	flag.StringVar(&configuration.InfluxDB.V1.Password, "dbpassword", configuration.InfluxDB.V1.User, "Database user password of the InfluxDB v1 database")
 	flag.StringVar(&configuration.InfluxDB.V2.Token, "dbtoken", configuration.InfluxDB.V2.Token, "Database authentication token of the InfluxDB v2 database")
 	flag.StringVar(&configuration.InfluxDB.V2.Org, "dborg", configuration.InfluxDB.V2.Org, "Database org of the InfluxDB v2 database")
 	flag.StringVar(&configuration.InfluxDB.V2.Bucket, "dbbucket", configuration.InfluxDB.V2.Bucket, "Database bucket of the InfluxDB v2 database")
@@ -81,7 +82,7 @@ func main() {
 	flag.StringVar(&configuration.FederalState, "state", configuration.FederalState, "Option to pull the data only from one German Federal State (e.g. Bayern) (default: all)")
 	flag.BoolVar(&configuration.Logging.Debug, "debug", configuration.Logging.Debug, "Option to run the microservice in debugging mode")
 	flag.Parse()
-	// Check if debug log should be enabeled
+	// Check if debug log should be enabled
 	if configuration.Logging.Debug {
 		Log.EnableDebug(true)
 	}
@@ -106,8 +107,14 @@ func main() {
 		// Run the microservice
 		Log.Logger.Info().Msg("Starting data refresh ... ")
 		a.Run(configuration.FederalState)
-		Log.Logger.Info().Msg("Finshed data refresh.")
-		// Wait the provided time to before running againg
+		Log.Logger.Info().Msg("Finished data refresh.")
+		// Check if single run
+		if configuration.SingleRun {
+			Log.Logger.Info().Msg("Stopping.")
+			Log.Rotate()
+			os.Exit(0)
+		}
+		// Wait the provided time to before running again
 		d := time.Second * time.Duration(configuration.TimeInterval)
 		Log.Logger.Info().Interface("duration", d).Msg("Waiting for the next run.")
 		time.Sleep(d)

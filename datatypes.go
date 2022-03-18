@@ -31,6 +31,7 @@ type Vaccination struct {
 		Moderna     int
 		AstraZeneca int
 		Johnson     int
+		Novavax     int
 	}
 	People struct {
 		FirstTime   int
@@ -44,7 +45,7 @@ type Vaccination struct {
 	LastUpdate time.Time
 }
 
-//
+// Configuration struct
 type Configuration struct {
 	InfluxDB struct {
 		URL     string `yaml:"url"`
@@ -64,7 +65,6 @@ type Configuration struct {
 	SingleRun    bool   `yaml:"single-run"`
 	FederalState string `yaml:"federal-state"`
 	Logging      struct {
-		Dir   string `yaml:"log-dir"`
-		Debug bool   `yaml:"debug"`
-	}
+		Debug bool `yaml:"debug"`
+	} `yaml:"logging"`
 }

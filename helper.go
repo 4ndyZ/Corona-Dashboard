@@ -4,6 +4,7 @@ import (
 	"strconv"
 )
 
+// MustStringToInt converts a string to an int
 func (a *App) MustStringToInt(s string) int {
 	if s == "" {
 		return 0
@@ -15,6 +16,7 @@ func (a *App) MustStringToInt(s string) int {
 	return i
 }
 
+// MustStringToFloat converts a string to a float64
 func (a *App) MustStringToFloat(s string) float64 {
 	if s == "" {
 		return 0.0

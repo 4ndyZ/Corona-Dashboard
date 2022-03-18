@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 getent group corona-dashboard >/dev/null || \
 	groupadd -r corona-dashboard
 getent passwd corona-dashboard >/dev/null || \
