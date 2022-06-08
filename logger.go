@@ -21,8 +21,8 @@ func (l *Logger) Initialize(f string) {
 	// Create file writer
 	fileWriter := &lumberjack.Logger{
 		Filename:   f,
-		MaxSize:    10, // Megabytes
-		MaxBackups: 5,
+		MaxSize:    100, // Megabytes
+		MaxBackups: 3,
 		MaxAge:     28, // Days
 		LocalTime:  true,
 	}
@@ -46,5 +46,13 @@ func (l *Logger) EnableDebug(debug bool) {
 			zerolog.SetGlobalLevel(zerolog.InfoLevel)
 			l.Logger.Info().Str("loglevel", "info").Msg("LogLevel changed.")
 		}
+	}
+}
+
+// Rotate log file
+func (l *Logger) Rotate() {
+	err := l.fileWriter.Rotate()
+	if err != nil {
+		Log.Logger.Warn().Str("error", err.Error()).Msg("Unable to rotate log file.")
 	}
 }

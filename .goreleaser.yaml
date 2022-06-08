@@ -28,7 +28,7 @@ nfpms:
     homepage: https://github.com/4ndyZ/Corona-Dashboard
     file_name_template: "{{ tolower .ProjectName }}-{{ tolower .Tag }}.{{ .Os }}.{{ tolower .Arch }}"
     license: GPL-3.0
-    # Build as deb for Debian based distributions and rpm for RedHat based distributions
+    # Build as deb for Debian based distors and rpm for RedHat based distros
     formats:
       - deb
       - rpm
@@ -42,12 +42,8 @@ nfpms:
           owner: root
           group: corona-dashboard
       # Systemd service file
-      - src: service/service_deb.service
+      - src: service/service.service
         dst: /usr/lib/systemd/system/corona-dashboard.service
-        packager: deb
-      - src: service/service_rpm.service
-        dst: /usr/lib/systemd/system/corona-dashboard.service
-        packager: rpm
     # Install and remove scripts
     scripts:
       preinstall: "scripts/preinstall.sh"
