@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
 	"os/signal"
@@ -99,7 +99,6 @@ func main() {
 	go func() {
 		s := <-sigs
 		Log.Logger.Info().Str("reason", s.String()).Msg("Stopping the service.")
-		Log.Rotate()
 		os.Exit(1)
 	}()
 	// Infinite loop
@@ -111,7 +110,6 @@ func main() {
 		// Check if single run
 		if configuration.SingleRun {
 			Log.Logger.Info().Msg("Stopping.")
-			Log.Rotate()
 			os.Exit(0)
 		}
 		// Wait the provided time to before running again
