@@ -3,7 +3,7 @@ module github.com/4ndyZ/Corona-Dashboard/m/v2
 go 1.18
 
 require (
-	github.com/influxdata/influxdb-client-go/v2 v2.9.0
+	github.com/influxdata/influxdb-client-go/v2 v2.9.1
 	github.com/rs/zerolog v1.27.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v3 v3.0.1
