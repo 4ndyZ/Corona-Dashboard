@@ -50,7 +50,7 @@ nfpms:
           owner: root
           group: corona-dashboard
       # Systemd service file
-      - src: service/service_service
+      - src: service/service.service
         dst: /usr/lib/systemd/system/corona-dashboard.service
     # Install and remove scripts
     scripts:
