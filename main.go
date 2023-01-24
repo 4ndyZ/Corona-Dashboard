@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
 	"os"
 	"os/signal"
 	"strings"
@@ -48,7 +47,7 @@ func main() {
 	}
 	// Try to parse the configuration file if exists
 	if config != "" {
-		body, err := ioutil.ReadFile(config)
+		body, err := os.ReadFile(config)
 		if err != nil {
 			Log.Logger.Warn().Str("error", err.Error()).Msg("Error while reading the configuration file.")
 		}

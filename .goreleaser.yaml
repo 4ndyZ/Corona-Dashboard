@@ -1,3 +1,4 @@
+project_name: corona-dashboard
 builds:
   - env: [CGO_ENABLED=0]
     goos:
@@ -13,10 +14,14 @@ builds:
 checksum:
   name_template: "Checksums.txt"
 archives:
-  - name_template: "{{ tolower .ProjectName }}-{{ tolower .Tag }}.{{ .Os }}.{{ tolower .Arch }}"
-    replacements:
-      amd64: x86_64
-      darwin: macOS
+  - name_template: >-
+      {{ tolower .ProjectName }}-{{ tolower .Tag }}.
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}.
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else }}{{ tolower .Arch }}
+      {{- end }}
     files:
       - config/config.conf
     format_overrides:
@@ -26,12 +31,15 @@ nfpms:
   - maintainer: AndyZ <info@andycraftz.eu>
     description: RKI Corona Dashboard for Grafana
     homepage: https://github.com/4ndyZ/Corona-Dashboard
-    file_name_template: "{{ tolower .ProjectName }}-{{ tolower .Tag }}.{{ .Os }}.{{ tolower .Arch }}"
+    file_name_template: >-
+      {{ tolower .ProjectName }}-{{ tolower .Tag }}.{{ .Os }}.{{ tolower .Arch }}
     license: GPL-3.0
     # Build as deb for Debian based distributions and rpm for RedHat based distributions
     formats:
       - deb
       - rpm
+    bindir: /usr/bin
+    section: web
     contents:
       # Config file
       - src: config/config.conf
@@ -42,21 +50,29 @@ nfpms:
           owner: root
           group: corona-dashboard
       # Systemd service file
-      - src: service/service_deb.service
+      - src: service/service_service
         dst: /usr/lib/systemd/system/corona-dashboard.service
-        packager: deb
-      - src: service/service_rpm.service
-        dst: /usr/lib/systemd/system/corona-dashboard.service
-        packager: rpm
     # Install and remove scripts
     scripts:
       preinstall: "scripts/preinstall.sh"
+      postinstall: "scripts/postinstall.sh"
+      preremove: "scripts/preremove.sh"
       postremove: "scripts/postremove.sh"
     overrides:
       rpm:
-        replacements:
-          amd64: x86_64
-          arm64: aarch64
+        file_name_template: >-
+          {{ tolower .ProjectName }}-{{ tolower .Tag }}.{{ .Os }}.
+          {{- if eq .Arch "amd64" }}x86_64
+          {{- else if eq .Arch "arm64" }}aarch64
+          {{- else }}{{ tolower .Arch }}
+          {{- end }}
+    # deb:
+    #   signature:
+    #     key_file: "{{ .Env.GPG_KEY_PATH }}"
+    #     type: origin
+    # rpm:
+    #   signature:
+    #     key_file: "{{ .Env.GPG_KEY_PATH }}"
 release:
   # Set name of the release on GitHub
   name_template: "Release v{{ .Version }}"
