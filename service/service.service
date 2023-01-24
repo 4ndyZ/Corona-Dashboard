@@ -1,7 +1,8 @@
 [Unit]
 Description=Corona-Dashboard Service
 ConditionPathExists=/usr/bin/corona-dashboard
-After=network.target
+After=network-online.target
+Wants=network-online.target
 StartLimitIntervalSec=60
 
 [Service]
@@ -10,10 +11,13 @@ User=corona-dashboard
 Group=corona-dashboard
 
 Restart=on-failure
-RestartSec=10
+RestartSec=15
 
 ExecStart=/usr/bin/corona-dashboard
 
+# Make sure config file exists
+ExecStartPre=+/bin/mkdir -p /etc/corona-dashboard
+ExecStartPre=+/bin/chown root:mac-api /etc/corona-dashboard
 # Make sure log directory exists
 ExecStartPre=+/bin/mkdir -p /var/log/corona-dashboard
 ExecStartPre=+/bin/chown corona-dashboard:corona-dashboard /var/log/corona-dashboard
