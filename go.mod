@@ -5,12 +5,11 @@ go 1.18
 require (
 	github.com/influxdata/influxdb-client-go/v2 v2.12.0
 	github.com/rs/zerolog v1.28.0
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/deepmap/oapi-codegen v1.11.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20200327222509-2487e7298839 // indirect
