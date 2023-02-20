@@ -15,7 +15,7 @@ checksum:
   name_template: "Checksums.txt"
 archives:
   - name_template: >-
-      {{ tolower .ProjectName }}-{{ tolower .Tag }}.
+      {{ tolower .ProjectName }}-{{ tolower .Version }}.
       {{- if eq .Os "darwin" }}macOS
       {{- else }}{{ .Os }}
       {{- end }}.
@@ -32,7 +32,7 @@ nfpms:
     description: RKI Corona Dashboard for Grafana
     homepage: https://github.com/4ndyZ/Corona-Dashboard
     file_name_template: >-
-      {{ tolower .ProjectName }}-{{ tolower .Tag }}.{{ .Os }}.{{ tolower .Arch }}
+      {{ tolower .ProjectName }}_{{ tolower .Version }}+{{ .Os }}_{{ tolower .Arch }}
     license: GPL-3.0
     # Build as deb for Debian based distributions and rpm for RedHat based distributions
     formats:
@@ -61,19 +61,9 @@ nfpms:
     overrides:
       rpm:
         file_name_template: >-
-          {{ tolower .ProjectName }}-{{ tolower .Tag }}.{{ .Os }}.
+          {{ tolower .ProjectName }}-{{ tolower .Version }}-1.{{ .Os }}.
           {{- if eq .Arch "amd64" }}x86_64
           {{- else if eq .Arch "arm64" }}aarch64
+          {{- else if eq .Arch "arm" }}armhfp
           {{- else }}{{ tolower .Arch }}
           {{- end }}
-    # deb:
-    #   signature:
-    #     key_file: "{{ .Env.GPG_KEY_PATH }}"
-    #     type: origin
-    # rpm:
-    #   signature:
-    #     key_file: "{{ .Env.GPG_KEY_PATH }}"
-release:
-  # Set name of the release on GitHub
-  name_template: "Release v{{ .Version }}"
-  prerelease: auto
