@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/influxdata/influxdb-client-go/v2 v2.12.2
-	github.com/rs/zerolog v1.29.0
+	github.com/rs/zerolog v1.29.1
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 )
