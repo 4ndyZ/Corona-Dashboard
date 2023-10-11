@@ -1,6 +1,6 @@
 module github.com/4ndyZ/Corona-Dashboard/m/v2
 
-go 1.21.1
+go 1.21.3
 
 require (
 	github.com/influxdata/influxdb-client-go/v2 v2.12.3
